@@ -9,12 +9,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity //att vi skapar upp en tabell med klassens namn som default
-@Data //lombok som autogenererar osynliga getters och setters
+@Data //lombok som autogenererar osynliga getters och setters, default-konstruktor
 @AllArgsConstructor(access = AccessLevel.PROTECTED) //vill ha hela konstruktorn, längre fram
 @NoArgsConstructor(access = AccessLevel.PROTECTED) //vill ha tomma konstruktorn, längre fram
 public class Book {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long id;
 
     private String title;
