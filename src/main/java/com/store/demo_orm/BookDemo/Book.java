@@ -3,6 +3,9 @@ package com.store.demo_orm.BookDemo;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,6 +21,12 @@ public class Book {
     @GeneratedValue
     private Long id;
 
+    @NotEmpty(message = "Title is mandatory")
+    @Size(min = 3, message = "At least three characters for title")
     private String title;
+
+    @NotEmpty(message = "Author is mandatory")
+    @Size(min = 3, message = "At least three characters for author")
+    @Pattern(regexp = "[A-Za-zÀ-ÖØ-öø-ÿ\\s.\\-']*$", message = "Only letters, spaces, and basic punctuation for author")
     private String author;
 }

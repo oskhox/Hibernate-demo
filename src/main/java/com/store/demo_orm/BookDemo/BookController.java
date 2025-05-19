@@ -1,5 +1,6 @@
 package com.store.demo_orm.BookDemo;
 
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -9,11 +10,9 @@ import java.util.List;
 public class BookController {
 
     private final BookRepository repo;
-    private final BookRepository bookRepository;
 
     public BookController(BookRepository repo, BookRepository bookRepository) {
         this.repo = repo;
-        this.bookRepository = bookRepository;
     }
 
     //hitta alla böcker
@@ -29,9 +28,9 @@ public class BookController {
     }
 
     //A) lägg till bok via POST för att skapa nya resurser och terminalen - very RESTful
-    //terminalkommando
+    //terminalkommando eller postman inkl. NULL
     @PostMapping("books/add")
-    public List<Book> addBooks(@RequestBody Book b) {//eftersom skickar in ett helt objekt
+    public List<Book> addBooks(@Valid  @RequestBody Book b) {//eftersom skickar in ett helt objekt
         repo.save(b);
         return repo.findAll();
     }
@@ -40,30 +39,28 @@ public class BookController {
     //For demo only
     //localhost:8080/api/books/addByGET?title=ccc&author=ddd
     @GetMapping("books/addByGET")
-    public List<Book> addByGET(@RequestParam String title, @RequestParam String author) { //pga inparameter
+    public List<Book> addByGET(@Valid @RequestParam String title, @RequestParam String author) { //pga inparameter
         repo.save(new Book(null, title, author)); //passing null as ID as it auto increments
         return repo.findAll();
     }
 
     //ta bort via id
-    @RequestMapping("books/{id}/delete")
+    @DeleteMapping("books/{id}/delete")
     public List<Book> deleteById(@PathVariable Long id) { //pga inparameter
         repo.deleteById(id);
         return repo.findAll();
     }
 
     //uppdatera eller lägg till ny via id
-    //anropa från terminalen
+    //anropa från terminalen eller postman inkl. NULL
     @PutMapping("books/update")
     public List<Book> updateBooks(@RequestBody Book b) {
-        //Om existerar
         if (b.getId() != null && repo.existsById(b.getId())) {
             Book existingBook = repo.findById(b.getId()).get();
             existingBook.setTitle(b.getTitle());
             existingBook.setAuthor(b.getAuthor());
             repo.save(existingBook);
         } else {
-            //Skapa ny bok, sätt alltid ID som null
             Book newBook = new Book(null, b.getTitle(), b.getAuthor());
             repo.save(newBook);
         }
